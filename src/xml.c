@@ -22,6 +22,7 @@
  */
 #include <ctype.h>
 #include <malloc.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "xml.h"
@@ -117,8 +118,6 @@ static size_t get_zero_terminated_array_elements(struct xml_node** nodes) {
  * @return true gdw. a == b
  */
 static _Bool xml_string_equals(struct xml_string* a, struct xml_string* b) {
-	_Bool const true = 1;
-	_Bool const false = 0;
 
 	if (a->length != b->length) {
 		return false;

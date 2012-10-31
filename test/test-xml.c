@@ -20,12 +20,10 @@
  *
  *  3. This notice may not be removed or altered from any source distribution.
  */
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <xml.h>
-
-static _Bool true = 1;
-static _Bool false = 0;
 
 
 
