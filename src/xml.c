@@ -654,6 +654,8 @@ struct xml_document* xml_parse_document(uint8_t* buffer, size_t length) {
  * [PUBLIC API]
  */
 void xml_document_free(struct xml_document* document, _Bool free_buffer) {
+	xml_node_free(document->root);
+
 	if (free_buffer) {
 		free(document->buffer.buffer);
 	}
