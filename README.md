@@ -9,6 +9,16 @@ into other projects without the need for big external dependencies.
 [![Build Status](https://secure.travis-ci.org/ooxi/xml.c.png)](http://travis-ci.org/ooxi/xml.c)
 
 
+Downloads
+---------
+
+All releases are based on master, so the preferred way of using xml.c is adding
+the repository as [git submodule](http://git-scm.com/book/en/Git-Tools-Submodules).
+
+If you prefer formal releases, check out the [release tags](https://github.com/ooxi/xml.c/tags).
+[Prebuild binaries](https://github.com/ooxi/xml.c/downloads) are also available.
+
+
 Usage
 -----
 
