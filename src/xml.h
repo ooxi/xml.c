@@ -1,0 +1,130 @@
+/**
+ * Copyright (c) 2012 ooxi/xml.c
+ *     https://github.com/ooxi/xml.c
+ *
+ * This software is provided 'as-is', without any express or implied warranty.
+ * In no event will the authors be held liable for any damages arising from the
+ * use of this software.
+ * 
+ * Permission is granted to anyone to use this software for any purpose,
+ * including commercial applications, and to alter it and redistribute it
+ * freely, subject to the following restrictions:
+ *
+ *  1. The origin of this software must not be misrepresented; you must not
+ *     claim that you wrote the original software. If you use this software in a
+ *     product, an acknowledgment in the product documentation would be
+ *     appreciated but is not required.
+ * 
+ *  2. Altered source versions must be plainly marked as such, and must not be
+ *     misrepresented as being the original software.
+ *
+ *  3. This notice may not be removed or altered from any source distribution.
+ */
+#ifndef HEADER_GLTOOLKIT_XML
+#define HEADER_GLTOOLKIT_XML
+
+
+/**
+ * Includes
+ */
+#include <stdint.h>
+#include <string.h>
+
+
+
+/**
+ * Opaque structure holding the parsed xml document
+ */
+struct xml_document;
+struct xml_node;
+
+/**
+ * Internal character sequence representation
+ */
+struct xml_string;
+
+
+
+/**
+ * Tries to parse the XML fragment in buffer
+ *
+ * @param buffer Chunk to parse
+ * @param length Size of the buffer
+ *
+ * @warning `buffer` will be referenced by the document, you may not free it
+ *     until you free the xml_document
+ * @warning You have to call xml_free after you finished using the document
+ *
+ * @return The parsed xml fragment iff `parsing was successful
+ */
+struct xml_document* xml_parse_document(uint8_t* buffer, size_t length);
+
+
+
+/**
+ * Frees all resources associated with the document. All xml_node and xml_string
+ * references obtained through the document will be invalidated
+ *
+ * @param document xml_document to free
+ * @param free_buffer iff true the internal buffer supplied via xml_parse_buffer
+ *     will be freed with the `free` system call
+ */
+void xml_document_free(struct xml_document* document, _Bool free_buffer);
+
+
+/**
+ * @return xml_node representing the document root
+ */
+struct xml_node* xml_document_root(struct xml_document* document);
+
+
+
+/**
+ * @return The xml_node's tag name
+ */
+struct xml_string* xml_node_name(struct xml_node* node);
+
+
+
+/**
+ * @return The xml_node's string content (if available, otherwise NULL)
+ */
+struct xml_string* xml_node_content(struct xml_node* node);
+
+
+
+/**
+ * @return Number of child nodes
+ */
+size_t xml_node_children(struct xml_node* node);
+
+
+
+/**
+ * @return The n-th child or 0 if out of range
+ */
+struct xml_node* xml_node_child(struct xml_node* node, size_t child);
+
+
+
+/**
+ * @return Length of the string
+ */
+size_t xml_string_length(struct xml_string* string);
+
+
+
+/**
+ * Copies the string into the supplied buffer
+ *
+ * @warning String will not be 0-terminated
+ * @warning Will write at most length bytes, even if the string is longer
+ */
+void xml_string_copy(struct xml_string* string, uint8_t* buffer, size_t length);
+
+
+
+
+
+#endif
+
