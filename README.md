@@ -19,6 +19,20 @@ If you prefer formal releases, check out the [release tags](https://github.com/o
 [Prebuild binaries](https://github.com/ooxi/xml.c/downloads) are also available.
 
 
+Building xml.c
+--------------
+
+Since xml.c uses [CMake](http://www.cmake.org/), building the library is fairly
+easy
+
+    $ git clone https://github.com/ooxi/xml.c.git xml.c
+    $ mkdir xml.c/build; cd xml.c/build
+    $ cmake -DCMAKE_BUILD_TYPE=Release ..
+    $ make && ./test-xml
+
+If you need a debug build, specify `CMAKE_BUILD_TYPE` as `Debug` and rebuild.
+
+
 Usage
 -----
 
