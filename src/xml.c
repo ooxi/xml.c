@@ -544,7 +544,7 @@ static struct xml_node* xml_parse_node(struct xml_parser* parser) {
 		 */
 		size_t old_elements = get_zero_terminated_array_elements(children);
 		size_t new_elements = old_elements + 1;
-		children = realloc(children, new_elements * sizeof(struct xml_node*));
+		children = realloc(children, (new_elements + 1) * sizeof(struct xml_node*));
 
 		/* Save child
 		 */
