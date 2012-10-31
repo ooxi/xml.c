@@ -77,9 +77,8 @@ static _Bool string_equals(struct xml_string* a, char const* b) {
  */
 #define SOURCE(source, content)						\
 	uint8_t* source = alloca(strlen(content) * sizeof(uint8_t));	\
-	{	size_t i = 0; for (; i < strlen(content); ++i) {	\
-			source[i] = content[i];				\
-		}							\
+	{	char const* content_string = content;			\
+		memcpy(source, content_string, strlen(content));	\
 	}
 
 
