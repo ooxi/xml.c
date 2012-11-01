@@ -629,8 +629,6 @@ exit_failure:
 
 /**
  * [PUBLIC API]
- *
- * 
  */
 struct xml_document* xml_parse_document(uint8_t* buffer, size_t length) {
 
@@ -664,6 +662,53 @@ struct xml_document* xml_parse_document(uint8_t* buffer, size_t length) {
 	document->buffer.length = length;
 	document->root = root;
 
+	return document;
+}
+
+
+
+/**
+ * [PUBLIC API]
+ */
+struct xml_document* xml_open_document(FILE* source) {
+
+	/* Prepare buffer
+	 */
+	size_t const read_chunk = 1; // TODO 4096;
+
+	size_t document_length = 0;
+	size_t buffer_size = 1;	// TODO 4069
+	uint8_t* buffer = malloc(buffer_size * sizeof(uint8_t));
+
+	/* Read hole file into buffer
+	 */
+	while (!feof(source)) {
+
+		/* Reallocate buffer
+		 */
+		if (buffer_size - document_length < read_chunk) {
+			buffer = realloc(buffer, buffer_size + 2 * read_chunk);
+			buffer_size += 2 * read_chunk;
+		}
+
+		size_t read = fread(
+			&buffer[document_length],
+			sizeof(uint8_t), read_chunk,
+			source
+		);
+
+		document_length += read;
+	}
+	fclose(source);
+
+	/* Try to parse buffer
+	 */
+	struct xml_document* document = xml_parse_document(buffer, document_length);
+
+	if (!document) {
+		free(buffer);
+		return 0;
+	}
 	return document;
 }
 
