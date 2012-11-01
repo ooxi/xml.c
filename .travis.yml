@@ -2,5 +2,5 @@ language: c
 compiler:
   - gcc
 script:
-  - mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Debug .. && make && ./test-xml
+  - mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Debug .. && make && ./test-xml && valgrind --tool=memcheck --leak-check=full --track-origins=yes -v ./test-xml
 
