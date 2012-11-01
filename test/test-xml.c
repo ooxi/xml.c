@@ -141,6 +141,58 @@ static void test_xml_parse_document_1() {
 
 
 
+/**
+ * Tests the eas functionality
+ */
+static void test_xml_parse_document_2() {
+	SOURCE(source, ""
+		"<Parent>\n"
+		"\t<Child>\n"
+		"\t\tFirst content\n"
+		"\t</Child>\n"
+		"\t<This><Is>\n"
+			"<A><Test>Content A</Test></A>\n"
+			"<B><Test>Content B</Test></B>\n"
+		"\t</Is></This>\n"
+		"\t<Child>\n"
+		"\t\tSecond content\n"
+		"\t</Child>\n"
+		"</Parent>\n"
+	);
+	struct xml_document* document = xml_parse_document(source, strlen(source));
+	assert_that(document, "Could not parse document");
+
+	struct xml_node* root = xml_document_root(document);
+	assert_that(string_equals(xml_node_name(root), "Parent"), "root node name must be `Parent'");
+	assert_that(3 == xml_node_children(root), "root must have two children");
+
+	struct xml_node* test_a = xml_easy_child(root, "This", "Is", "A", "Test", 0);
+	assert_that(test_a, "Cannot find Parent/This/Is/A/Test");
+	assert_that(string_equals(xml_node_content(test_a), "Content A"), "Content of Parent/This/Is/A/Test must be `Content A'");
+
+	struct xml_node* test_b = xml_easy_child(root, "This", "Is", "B", "Test", 0);
+	assert_that(test_b, "Cannot find Parent/This/Is/B/Test");
+	assert_that(string_equals(xml_node_content(test_b), "Content B"), "Content of Parent/This/Is/B/Test must be `Content B'");
+
+	struct xml_node* test_c = xml_easy_child(root, "This", "Is", "C", "Test", 0);
+	assert_that(!test_c, "Must not find Parent/This/Is/C/Test because no such path exists");
+
+	struct xml_node* must_be_null = xml_easy_child(root, "Child");
+	assert_that(!must_be_null, "Parent/Child cannot be a valid expression, because there are two children named `Child' in `Parent'");
+
+	uint8_t* name_is = xml_easy_name(xml_easy_child(root, "This", "Is", 0));
+	assert_that(!strcmp(name_is, "Is"), "Name of Parent/This/Is must be `Is'");
+	free(name_is);
+
+	uint8_t* content_a = xml_easy_content(test_a);
+	assert_that(!strcmp(content_a, "Content A"), "Content of Parent/This/Is/A/Test must be `Content A'");
+	free(content_a);
+
+	xml_document_free(document, true);
+}
+
+
+
 
 
 /**
@@ -149,6 +201,7 @@ static void test_xml_parse_document_1() {
 int main(int argc, char** argv) {
 	test_xml_parse_document_0();
 	test_xml_parse_document_1();
+	test_xml_parse_document_2();
 
 	fprintf(stdout, "All tests passed :-)\n");
 	exit(EXIT_SUCCESS);

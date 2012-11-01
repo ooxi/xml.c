@@ -22,6 +22,7 @@
  */
 #include <ctype.h>
 #include <malloc.h>
+#include <stdarg.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -37,7 +38,7 @@
  * UTF-8 text
  */
 struct xml_string {
-	uint8_t* buffer;
+	uint8_t const* buffer;
 	size_t length;
 };
 
@@ -59,7 +60,11 @@ struct xml_node {
  * An xml_document simply contains the root node and the underlying buffer
  */
 struct xml_document {
-	struct xml_string buffer;
+	struct {
+		uint8_t* buffer;
+		size_t length;
+	} buffer;
+
 	struct xml_node* root;
 };
 
@@ -130,6 +135,20 @@ static _Bool xml_string_equals(struct xml_string* a, struct xml_string* b) {
 	}
 
 	return true;
+}
+
+
+
+/**
+ * [PRIVATE]
+ */
+static uint8_t* xml_string_clone(struct xml_string* s) {
+	uint8_t* clone = calloc(s->length + 1, sizeof(uint8_t));
+
+	xml_string_copy(s, clone, s->length);
+	clone[s->length] = 0;
+
+	return clone;
 }
 
 
@@ -711,6 +730,96 @@ struct xml_node* xml_node_child(struct xml_node* node, size_t child) {
 	}
 
 	return node->children[child];
+}
+
+
+
+/**
+ * [PUBLIC API]
+ */
+struct xml_node* xml_easy_child(struct xml_node* node, uint8_t const* child_name, ...) {
+
+	/* Find childrens, one by one
+	 */
+	struct xml_node* current = node;
+
+	va_list arguments;
+	va_start(arguments, child_name);
+
+
+	/* Descent to current.child
+	 */
+	while (child_name) {
+
+		/* Convert child_name to xml_string for easy comparison
+		 */
+		struct xml_string cn = {
+			.buffer = child_name,
+			.length = strlen(child_name)
+		};
+
+		/* Interate through all children
+		 */
+		struct xml_node* next = 0;
+
+		size_t i = 0; for (; i < xml_node_children(current); ++i) {
+			struct xml_node* child = xml_node_child(current, i);
+
+			if (xml_string_equals(xml_node_name(child), &cn)) {
+				if (!next) {
+					next = child;
+
+				/* Two children with the same name
+				 */
+				} else {
+					return 0;
+				}
+			}
+		}
+
+		/* No child with that name found
+		 */
+		if (!next) {
+			return 0;
+		}
+		current = next;		
+		
+		/* Find name of next child
+		 */
+		child_name = va_arg(arguments, uint8_t const*);
+	}
+	va_end(arguments);
+
+
+	/* Return current element
+	 */
+	return current;
+}
+
+
+
+/**
+ * [PUBLIC API]
+ */
+uint8_t* xml_easy_name(struct xml_node* node) {
+	if (!node) {
+		return 0;
+	}
+
+	return xml_string_clone(xml_node_name(node));
+}
+
+
+
+/**
+ * [PUBLIC API]
+ */
+uint8_t* xml_easy_content(struct xml_node* node) {
+	if (!node) {
+		return 0;
+	}
+
+	return xml_string_clone(xml_node_content(node));
 }
 
 
