@@ -53,11 +53,26 @@ struct xml_string;
  *
  * @warning `buffer` will be referenced by the document, you may not free it
  *     until you free the xml_document
- * @warning You have to call xml_free after you finished using the document
+ * @warning You have to call xml_document_free after you finished using the
+ *     document
  *
- * @return The parsed xml fragment iff `parsing was successful
+ * @return The parsed xml fragment iff parsing was successful, 0 otherwise
  */
 struct xml_document* xml_parse_document(uint8_t* buffer, size_t length);
+
+
+
+/**
+ * Tries to read an XML document from disk
+ *
+ * @param source File that will be read into an xml document. Will be closed
+ *
+ * @warning You have to call xml_document_free with free_buffer = true after you
+ *     finished using the document
+ *
+ * @return The parsed xml fragment iff parsing was successful, 0 otherwise
+ */
+struct xml_document* xml_open_document(FILE* source);
 
 
 
