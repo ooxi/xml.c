@@ -719,6 +719,9 @@ struct xml_node* xml_node_child(struct xml_node* node, size_t child) {
  * [PUBLIC API]
  */
 size_t xml_string_length(struct xml_string* string) {
+	if (!string) {
+		return 0;
+	}
 	return string->length;
 }
 
@@ -728,6 +731,10 @@ size_t xml_string_length(struct xml_string* string) {
  * [PUBLIC API]
  */
 void xml_string_copy(struct xml_string* string, uint8_t* buffer, size_t length) {
+	if (!string) {
+		return;
+	}
+
 	#define min(X,Y) ((X) < (Y) ? (X) : (Y))
 	length = min(length, string->length);
 	#undef min
