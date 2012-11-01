@@ -76,9 +76,9 @@ static _Bool string_equals(struct xml_string* a, char const* b) {
  * Converts a static character array to an uint8_t data source
  */
 #define SOURCE(source, content)						\
-	uint8_t* source = alloca(strlen(content) * sizeof(uint8_t));	\
+	uint8_t* source = calloc(strlen(content) + 1, sizeof(uint8_t));	\
 	{	char const* content_string = content;			\
-		memcpy(source, content_string, strlen(content));	\
+		memcpy(source, content_string, strlen(content) + 1);	\
 	}
 
 
@@ -88,6 +88,10 @@ static _Bool string_equals(struct xml_string* a, char const* b) {
  */
 static void test_xml_parse_document_0() {
 	SOURCE(source, "<Hello>World</Hello>");
+//	uint8_t* source = malloc((1 + strlen("<Hello>World</Hello>")) * sizeof(uint8_t));
+//	{	char const* content_string = "<Hello>World</Hello>";
+//		memcpy(source, content_string, strlen("<Hello>World</Hello>") + 1);
+//	}
 
 	struct xml_document* document = xml_parse_document(source, strlen(source));
 	assert_that(document, "Could not parse document");
@@ -96,7 +100,7 @@ static void test_xml_parse_document_0() {
 	assert_that(string_equals(xml_node_name(root), "Hello"), "root node name must be `Hello'");
 	assert_that(string_equals(xml_node_content(root), "World"), "root node content must be `World'");
 
-	xml_document_free(document, false);
+	xml_document_free(document, true);
 }
 
 /**
@@ -132,7 +136,7 @@ static void test_xml_parse_document_1() {
 	assert_that(string_equals(xml_node_name(second_child), "Child"), "second_child node name must be `Child'");
 	assert_that(string_equals(xml_node_content(second_child), "Second content"), "second_child node content must be `tSecond content'");
 
-	xml_document_free(document, false);
+	xml_document_free(document, true);
 }
 
 
