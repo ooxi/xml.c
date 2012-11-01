@@ -193,6 +193,29 @@ static void test_xml_parse_document_2() {
 
 
 
+/**
+ * Tests the xml_open_document functionality
+ */
+static void test_xml_parse_document_3() {
+	#define FILE_NAME "test.xml"
+	FILE* handle = fopen(FILE_NAME, "rb");
+	assert_that(handle, "Cannot open " FILE_NAME);
+
+	struct xml_document* document = xml_open_document(handle);
+	assert_that(document, "Cannot parse " FILE_NAME);
+
+	struct xml_node* element = xml_easy_child(
+		xml_document_root(document), "Element", "With", 0
+	);
+	assert_that(element, "Cannot find Document/Element/With");
+	assert_that(string_equals(xml_node_content(element), "Child"), "Content of Document/Element/With must be `Child'");
+
+	xml_document_free(document, true);
+	#undef FILE_NAME
+}
+
+
+
 
 
 /**
@@ -202,6 +225,7 @@ int main(int argc, char** argv) {
 	test_xml_parse_document_0();
 	test_xml_parse_document_1();
 	test_xml_parse_document_2();
+	test_xml_parse_document_3();
 
 	fprintf(stdout, "All tests passed :-)\n");
 	exit(EXIT_SUCCESS);
