@@ -108,6 +108,31 @@ struct xml_node* xml_node_child(struct xml_node* node, size_t child);
 
 
 /**
+ * @return The node described by the path or 0 if child cannot be found
+ * @warning Each element on the way must be unique
+ * @warning Last argument must be 0
+ */
+struct xml_node* xml_easy_child(struct xml_node* node, uint8_t const* child, ...);
+
+
+
+/**
+ * @return 0-terminated copy of node name
+ * @warning User must free the result
+ */
+uint8_t* xml_easy_name(struct xml_node* node);
+
+
+
+/**
+ * @return 0-terminated copy of node content
+ * @warning User must free the result
+ */
+uint8_t* xml_easy_content(struct xml_node* node);
+
+
+
+/**
  * @return Length of the string
  */
 size_t xml_string_length(struct xml_string* string);
