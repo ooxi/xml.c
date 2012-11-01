@@ -196,7 +196,7 @@ static void xml_node_free(struct xml_node* node) {
  *
  * Echos the parsers call stack for debugging purposes
  */
-#ifdef DEBUG
+#ifdef XML_PARSER_VERBOSE
 static void xml_parser_info(struct xml_parser* parser, char const* message) {
 	fprintf(stdout, "xml_parser_info %s\n", message);
 }
@@ -279,7 +279,7 @@ static void xml_parser_consume(struct xml_parser* parser, size_t n) {
 
 	/* Debug information
 	 */
-	#ifdef DEBUG
+	#ifdef XML_PARSER_VERBOSE
 	#define min(X,Y) ((X) < (Y) ? (X) : (Y))
 	char* consumed = alloca((n + 1) * sizeof(char));
 	memcpy(consumed, &parser->buffer[parser->position], min(n, parser->length - parser->position));
