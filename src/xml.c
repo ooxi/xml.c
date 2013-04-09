@@ -590,44 +590,31 @@ struct xml_document* xml_parse_document(uint8_t* buffer, size_t length) {
  */
 struct xml_document* xml_open_document(FILE* source) {
 
-	/* Prepare buffer
-	 */
-	size_t const read_chunk = 1; // TODO 4096;
+    long len;
 
-	size_t document_length = 0;
-	size_t buffer_size = 1;	// TODO 4069
-	uint8_t* buffer = malloc(buffer_size * sizeof(uint8_t));
+    if (fseek(source, 0, SEEK_END) == 0 &&
+        (len = ftell(source)) > 0 &&
+        fseek(source, 0, SEEK_SET) == 0)
+    {
+        /* Prepare buffer */
+        uint8_t* buffer = malloc(len);
 
-	/* Read hole file into buffer
-	 */
-	while (!feof(source)) {
+        if (fread(buffer, 1, len, source) == len)
+        {
+            /* Try to parse buffer
+             */
+            struct xml_document* document = xml_parse_document(buffer, len);
 
-		/* Reallocate buffer
-		 */
-		if (buffer_size - document_length < read_chunk) {
-			buffer = realloc(buffer, buffer_size + 2 * read_chunk);
-			buffer_size += 2 * read_chunk;
-		}
+            if (!document) {
+                free(buffer);
+                return NULL;
+            }
 
-		size_t read = fread(
-			&buffer[document_length],
-			sizeof(uint8_t), read_chunk,
-			source
-		);
+            return document;
+        }
+    }
 
-		document_length += read;
-	}
-	fclose(source);
-
-	/* Try to parse buffer
-	 */
-	struct xml_document* document = xml_parse_document(buffer, document_length);
-
-	if (!document) {
-		free(buffer);
-		return 0;
-	}
-	return document;
+    return NULL;
 }
 
 
