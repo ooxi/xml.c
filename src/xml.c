@@ -35,22 +35,12 @@
 /**
  * [OPAQUE API]
  *
- * UTF-8 text
- */
-struct xml_string {
-	uint8_t const* buffer;
-	size_t length;
-};
-
-/**
- * [OPAQUE API]
- *
  * An xml_node will always contain a tag name and a 0-terminated list of
  * children. Moreover it may contain text content.
  */
 struct xml_node {
-	struct xml_string* name;
-	struct xml_string* content;
+	char const* name;
+	char const* content;
 	struct xml_node** children;
 };
 
@@ -117,68 +107,10 @@ static size_t get_zero_terminated_array_elements(struct xml_node** nodes) {
 
 /**
  * [PRIVATE]
- *
- * @warning No UTF conversions will be attempted
- *
- * @return true gdw. a == b
- */
-static _Bool xml_string_equals(struct xml_string* a, struct xml_string* b) {
-
-	if (a->length != b->length) {
-		return false;
-	}
-
-	size_t i = 0; for (; i < a->length; ++i) {
-		if (a->buffer[i] != b->buffer[i]) {
-			return false;
-		}
-	}
-
-	return true;
-}
-
-
-
-/**
- * [PRIVATE]
- */
-static uint8_t* xml_string_clone(struct xml_string* s) {
-	uint8_t* clone = calloc(s->length + 1, sizeof(uint8_t));
-
-	xml_string_copy(s, clone, s->length);
-	clone[s->length] = 0;
-
-	return clone;
-}
-
-
-
-/**
- * [PRIVATE]
- *
- * Frees the resources allocated by the string
- *
- * @waring `buffer` must _not_ be freed, since it is a reference to the
- *     document's buffer
- */
-static void xml_string_free(struct xml_string* string) {
-	free(string);
-}
-
-
-
-/**
- * [PRIVATE]
  * 
  * Frees the resources allocated by the node
  */
 static void xml_node_free(struct xml_node* node) {
-	xml_string_free(node->name);
-
-	if (node->content) {
-		xml_string_free(node->content);
-	}
-
 	struct xml_node** it = node->children;
 	while (*it) {
 		xml_node_free(*it);
@@ -338,7 +270,7 @@ static void xml_skip_whitespace(struct xml_parser* parser) {
  * tag_name>
  * ---
  */
-static struct xml_string* xml_parse_tag_end(struct xml_parser* parser) {
+static char const* xml_parse_tag_end(struct xml_parser* parser) {
 	xml_parser_info(parser, "tag_end");
 	size_t start = parser->position;
 	size_t length = 0;
@@ -366,10 +298,8 @@ static struct xml_string* xml_parse_tag_end(struct xml_parser* parser) {
 
 	/* Return parsed tag name
 	 */
-	struct xml_string* name = malloc(sizeof(struct xml_string));
-	name->buffer = &parser->buffer[start];
-	name->length = length;
-	return name;
+    parser->buffer[start + length] = 0;
+	return &parser->buffer[start];
 }
 
 
@@ -383,7 +313,7 @@ static struct xml_string* xml_parse_tag_end(struct xml_parser* parser) {
  * <tag_name>
  * ---
  */
-static struct xml_string* xml_parse_tag_open(struct xml_parser* parser) {
+static char const* xml_parse_tag_open(struct xml_parser* parser) {
 	xml_parser_info(parser, "tag_open");
 	xml_skip_whitespace(parser);
 
@@ -411,7 +341,7 @@ static struct xml_string* xml_parse_tag_open(struct xml_parser* parser) {
  * </tag_name>
  * ---
  */
-static struct xml_string* xml_parse_tag_close(struct xml_parser* parser) {
+static char const* xml_parse_tag_close(struct xml_parser* parser) {
 	xml_parser_info(parser, "tag_close");
 	xml_skip_whitespace(parser);
 
@@ -451,7 +381,7 @@ static struct xml_string* xml_parse_tag_close(struct xml_parser* parser) {
  *
  * @warning CDATA etc. is _not_ and will never be supported
  */
-static struct xml_string* xml_parse_content(struct xml_parser* parser) {
+static char const* xml_parse_content(struct xml_parser* parser) {
 	xml_parser_info(parser, "content");
 
 	/* Whitespace will be ignored
@@ -489,10 +419,8 @@ static struct xml_string* xml_parse_content(struct xml_parser* parser) {
 
 	/* Return text
 	 */
-	struct xml_string* content = malloc(sizeof(struct xml_string));
-	content->buffer = &parser->buffer[start];
-	content->length = length;
-	return content;
+    parser->buffer[start + length] = 0;
+    return &parser->buffer[start];
 }
 
 
@@ -519,9 +447,9 @@ static struct xml_node* xml_parse_node(struct xml_parser* parser) {
 
 	/* Setup variables
 	 */
-	struct xml_string* tag_open = 0;
-	struct xml_string* tag_close = 0;
-	struct xml_string* content = 0;
+	char const* tag_open = 0;
+	char const* tag_close = 0;
+	char const* content = 0;
 
 	struct xml_node** children = calloc(1, sizeof(struct xml_node*));
 	children[0] = 0;
@@ -583,7 +511,7 @@ static struct xml_node* xml_parse_node(struct xml_parser* parser) {
 
 	/* Close tag has to match open tag
 	 */
-	if (!xml_string_equals(tag_open, tag_close)) {
+	if (strcmp(tag_open, tag_close) != 0) {
 		xml_parser_error(parser, NO_CHARACTER, "xml_parse_node::tag missmatch");
 		goto exit_failure;
 	}
@@ -591,8 +519,6 @@ static struct xml_node* xml_parse_node(struct xml_parser* parser) {
 
 	/* Return parsed node
 	 */
-	xml_string_free(tag_close);
-
 	struct xml_node* node = malloc(sizeof(struct xml_node));
 	node->name = tag_open;
 	node->content = content;
@@ -603,24 +529,16 @@ static struct xml_node* xml_parse_node(struct xml_parser* parser) {
 	/* A failure occured, so free all allocalted resources
 	 */
 exit_failure:
-	if (tag_open) {
-		xml_string_free(tag_open);
-	}
-	if (tag_close) {
-		xml_string_free(tag_close);
-	}
-	if (content) {
-		xml_string_free(content);
-	}
+    {
+        struct xml_node** it = children;
+        while (*it) {
+            xml_node_free(*it);
+            ++it;
+        }
+        free(children);
 
-	struct xml_node** it = children;
-	while (*it) {
-		xml_node_free(*it);
-		++it;
-	}
-	free(children);
-
-	return 0;
+        return 0;
+    }
 }
 
 
@@ -672,44 +590,31 @@ struct xml_document* xml_parse_document(uint8_t* buffer, size_t length) {
  */
 struct xml_document* xml_open_document(FILE* source) {
 
-	/* Prepare buffer
-	 */
-	size_t const read_chunk = 1; // TODO 4096;
+    long len;
 
-	size_t document_length = 0;
-	size_t buffer_size = 1;	// TODO 4069
-	uint8_t* buffer = malloc(buffer_size * sizeof(uint8_t));
+    if (fseek(source, 0, SEEK_END) == 0 &&
+        (len = ftell(source)) > 0 &&
+        fseek(source, 0, SEEK_SET) == 0)
+    {
+        /* Prepare buffer */
+        uint8_t* buffer = malloc(len);
 
-	/* Read hole file into buffer
-	 */
-	while (!feof(source)) {
+        if (fread(buffer, 1, len, source) == len)
+        {
+            /* Try to parse buffer
+             */
+            struct xml_document* document = xml_parse_document(buffer, len);
 
-		/* Reallocate buffer
-		 */
-		if (buffer_size - document_length < read_chunk) {
-			buffer = realloc(buffer, buffer_size + 2 * read_chunk);
-			buffer_size += 2 * read_chunk;
-		}
+            if (!document) {
+                free(buffer);
+                return NULL;
+            }
 
-		size_t read = fread(
-			&buffer[document_length],
-			sizeof(uint8_t), read_chunk,
-			source
-		);
+            return document;
+        }
+    }
 
-		document_length += read;
-	}
-	fclose(source);
-
-	/* Try to parse buffer
-	 */
-	struct xml_document* document = xml_parse_document(buffer, document_length);
-
-	if (!document) {
-		free(buffer);
-		return 0;
-	}
-	return document;
+    return NULL;
 }
 
 
@@ -740,7 +645,7 @@ struct xml_node* xml_document_root(struct xml_document* document) {
 /**
  * [PUBLIC API]
  */
-struct xml_string* xml_node_name(struct xml_node* node) {
+char const* xml_node_name(struct xml_node* node) {
 	return node->name;
 }
 
@@ -749,7 +654,7 @@ struct xml_string* xml_node_name(struct xml_node* node) {
 /**
  * [PUBLIC API]
  */
-struct xml_string* xml_node_content(struct xml_node* node) {
+char const* xml_node_content(struct xml_node* node) {
 	return node->content;
 }
 
@@ -796,13 +701,6 @@ struct xml_node* xml_easy_child(struct xml_node* node, uint8_t const* child_name
 	 */
 	while (child_name) {
 
-		/* Convert child_name to xml_string for easy comparison
-		 */
-		struct xml_string cn = {
-			.buffer = child_name,
-			.length = strlen(child_name)
-		};
-
 		/* Interate through all children
 		 */
 		struct xml_node* next = 0;
@@ -810,7 +708,7 @@ struct xml_node* xml_easy_child(struct xml_node* node, uint8_t const* child_name
 		size_t i = 0; for (; i < xml_node_children(current); ++i) {
 			struct xml_node* child = xml_node_child(current, i);
 
-			if (xml_string_equals(xml_node_name(child), &cn)) {
+			if (strcmp(xml_node_name(child), child_name) == 0) {
 				if (!next) {
 					next = child;
 
@@ -839,60 +737,5 @@ struct xml_node* xml_easy_child(struct xml_node* node, uint8_t const* child_name
 	/* Return current element
 	 */
 	return current;
-}
-
-
-
-/**
- * [PUBLIC API]
- */
-uint8_t* xml_easy_name(struct xml_node* node) {
-	if (!node) {
-		return 0;
-	}
-
-	return xml_string_clone(xml_node_name(node));
-}
-
-
-
-/**
- * [PUBLIC API]
- */
-uint8_t* xml_easy_content(struct xml_node* node) {
-	if (!node) {
-		return 0;
-	}
-
-	return xml_string_clone(xml_node_content(node));
-}
-
-
-
-/**
- * [PUBLIC API]
- */
-size_t xml_string_length(struct xml_string* string) {
-	if (!string) {
-		return 0;
-	}
-	return string->length;
-}
-
-
-
-/**
- * [PUBLIC API]
- */
-void xml_string_copy(struct xml_string* string, uint8_t* buffer, size_t length) {
-	if (!string) {
-		return;
-	}
-
-	#define min(X,Y) ((X) < (Y) ? (X) : (Y))
-	length = min(length, string->length);
-	#undef min
-
-	memcpy(buffer, string->buffer, length);
 }
 

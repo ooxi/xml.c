@@ -66,27 +66,27 @@ int main(int argc, char** argv) {
 
 	/* Say Hello World :-)
 	 */
-	struct xml_node* root_hello = xml_node_child(root, 0);
-	struct xml_string* hello = xml_node_name(root_hello);
-	struct xml_string* world = xml_node_content(root_hello);
-
-	/* Watch out: `xml_string_copy' will not 0-terminate your buffers! (but
-	 *     `calloc' will :-)
-	 */
-	uint8_t* hello_0 = calloc(xml_string_length(hello) + 1, sizeof(uint8_t));
-	uint8_t* world_0 = calloc(xml_string_length(world) + 1, sizeof(uint8_t));
-	xml_string_copy(hello, hello_0, xml_string_length(hello));
-	xml_string_copy(world, world_0, xml_string_length(world));
-
-	printf("%s %s\n", hello_0, world_0);
-	free(hello_0);
-	free(world_0);
-
-
-	/* Extract amount of Root/This children
-	 */
-	struct xml_node* root_this = xml_node_child(root, 1);
-	printf("Root/This has %lu children\n", (unsigned long)xml_node_children(root_this));
+//	struct xml_node* root_hello = xml_node_child(root, 0);
+//	struct xml_string* hello = xml_node_name(root_hello);
+//	struct xml_string* world = xml_node_content(root_hello);
+//
+//	/* Watch out: `xml_string_copy' will not 0-terminate your buffers! (but
+//	 *     `calloc' will :-)
+//	 */
+//	uint8_t* hello_0 = calloc(xml_string_length(hello) + 1, sizeof(uint8_t));
+//	uint8_t* world_0 = calloc(xml_string_length(world) + 1, sizeof(uint8_t));
+//	xml_string_copy(hello, hello_0, xml_string_length(hello));
+//	xml_string_copy(world, world_0, xml_string_length(world));
+//
+//	printf("%s %s\n", hello_0, world_0);
+//	free(hello_0);
+//	free(world_0);
+//
+//
+//	/* Extract amount of Root/This children
+//	 */
+//	struct xml_node* root_this = xml_node_child(root, 1);
+//	printf("Root/This has %lu children\n", (unsigned long)xml_node_children(root_this));
 
 
 	/* Remember to free the document or you'll risk a memory leak
