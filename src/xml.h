@@ -38,11 +38,6 @@
 struct xml_document;
 struct xml_node;
 
-/**
- * Internal character sequence representation
- */
-struct xml_string;
-
 
 
 /**
@@ -97,14 +92,14 @@ struct xml_node* xml_document_root(struct xml_document* document);
 /**
  * @return The xml_node's tag name
  */
-struct xml_string* xml_node_name(struct xml_node* node);
+char const* xml_node_name(struct xml_node* node);
 
 
 
 /**
  * @return The xml_node's string content (if available, otherwise NULL)
  */
-struct xml_string* xml_node_content(struct xml_node* node);
+char const* xml_node_content(struct xml_node* node);
 
 
 
@@ -128,41 +123,6 @@ struct xml_node* xml_node_child(struct xml_node* node, size_t child);
  * @warning Last argument must be 0
  */
 struct xml_node* xml_easy_child(struct xml_node* node, uint8_t const* child, ...);
-
-
-
-/**
- * @return 0-terminated copy of node name
- * @warning User must free the result
- */
-uint8_t* xml_easy_name(struct xml_node* node);
-
-
-
-/**
- * @return 0-terminated copy of node content
- * @warning User must free the result
- */
-uint8_t* xml_easy_content(struct xml_node* node);
-
-
-
-/**
- * @return Length of the string
- */
-size_t xml_string_length(struct xml_string* string);
-
-
-
-/**
- * Copies the string into the supplied buffer
- *
- * @warning String will not be 0-terminated
- * @warning Will write at most length bytes, even if the string is longer
- */
-void xml_string_copy(struct xml_string* string, uint8_t* buffer, size_t length);
-
-
 
 
 
