@@ -158,7 +158,7 @@ static uint8_t* xml_string_clone(struct xml_string* s) {
  *
  * Frees the resources allocated by the string
  *
- * @waring `buffer` must _not_ be freed, since it is a reference to the
+ * @warning `buffer` must _not_ be freed, since it is a reference to the
  *     document's buffer
  */
 static void xml_string_free(struct xml_string* string) {
