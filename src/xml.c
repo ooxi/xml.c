@@ -536,7 +536,7 @@ static struct xml_node* xml_parse_node(struct xml_parser* parser) {
 	}
 
 	/* If tag ends with `/' it's self closing, skip content lookup */
-	if ('/' == tag_open->buffer[tag_open->length - 1]) {
+	if (tag_open->length > 0 && '/' == tag_open->buffer[tag_open->length - 1]) {
 		/* Drop `/'
 		 */
 		--tag_open->length;
