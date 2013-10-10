@@ -535,6 +535,13 @@ static struct xml_node* xml_parse_node(struct xml_parser* parser) {
 		goto exit_failure;
 	}
 
+	/* If tag ends with `/' it's self closing, skip content lookup */
+	if (tag_open->length > 0 && '/' == tag_open->buffer[tag_open->length - 1]) {
+		/* Drop `/'
+		 */
+		--tag_open->length;
+		goto node_creation;
+	}
 
 	/* If the content does not start with '<', a text content is assumed
 	 */
@@ -593,6 +600,7 @@ static struct xml_node* xml_parse_node(struct xml_parser* parser) {
 	 */
 	xml_string_free(tag_close);
 
+node_creation:;
 	struct xml_node* node = malloc(sizeof(struct xml_node));
 	node->name = tag_open;
 	node->content = content;
