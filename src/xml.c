@@ -143,8 +143,9 @@ static _Bool xml_string_equals(struct xml_string* a, struct xml_string* b) {
  * [PRIVATE]
  */
 static uint8_t* xml_string_clone(struct xml_string* s) {
-	if (!s)
+	if (!s) {
 		return 0;
+	}
 
 	uint8_t* clone = calloc(s->length + 1, sizeof(uint8_t));
 
