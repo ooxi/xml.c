@@ -796,7 +796,7 @@ struct xml_node* xml_node_child(struct xml_node* node, size_t child) {
  */
 struct xml_node* xml_easy_child(struct xml_node* node, uint8_t const* child_name, ...) {
 
-	/* Find childrens, one by one
+	/* Find children, one by one
 	 */
 	struct xml_node* current = node;
 
