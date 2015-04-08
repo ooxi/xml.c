@@ -729,7 +729,7 @@ struct xml_document* xml_open_document(FILE* source) {
 /**
  * [PUBLIC API]
  */
-void xml_document_free(struct xml_document* document, _Bool free_buffer) {
+void xml_document_free(struct xml_document* document, bool free_buffer) {
 	xml_node_free(document->root);
 
 	if (free_buffer) {
