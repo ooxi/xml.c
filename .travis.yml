@@ -2,7 +2,12 @@ language: c
 compiler:
   - gcc
 before_install:
+  - sudo apt-get update
   - sudo apt-get install cmake valgrind
 script:
-  - mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Debug -DXML_PARSER_VERBOSE=On .. && make && ./test-xml && valgrind --tool=memcheck --leak-check=full --track-origins=yes -v ./test-xml
+  - mkdir build && cd build
+  - cmake -DCMAKE_BUILD_TYPE=Debug -DXML_PARSER_VERBOSE=On ..
+  - make
+  - ./test-xml
+  - valgrind --tool=memcheck --leak-check=full --track-origins=yes -v ./test-xml
 
