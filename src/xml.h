@@ -30,7 +30,9 @@
 #include <stdint.h>
 #include <string.h>
 
-
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /**
  * Opaque structure holding the parsed xml document
@@ -162,9 +164,9 @@ size_t xml_string_length(struct xml_string* string);
  */
 void xml_string_copy(struct xml_string* string, uint8_t* buffer, size_t length);
 
-
-
-
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 
