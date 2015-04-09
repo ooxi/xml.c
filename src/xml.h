@@ -29,8 +29,11 @@
  */
 #include <stdint.h>
 #include <string.h>
+#include <stdbool.h>
 
-
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /**
  * Opaque structure holding the parsed xml document
@@ -84,7 +87,7 @@ struct xml_document* xml_open_document(FILE* source);
  * @param free_buffer iff true the internal buffer supplied via xml_parse_buffer
  *     will be freed with the `free` system call
  */
-void xml_document_free(struct xml_document* document, _Bool free_buffer);
+void xml_document_free(struct xml_document* document, bool free_buffer);
 
 
 /**
@@ -162,9 +165,9 @@ size_t xml_string_length(struct xml_string* string);
  */
 void xml_string_copy(struct xml_string* string, uint8_t* buffer, size_t length);
 
-
-
-
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 
