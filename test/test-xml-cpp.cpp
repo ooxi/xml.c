@@ -67,15 +67,15 @@ static bool string_equals(struct xml_string* a, const char* b) {
 	return true;
 }
 
+
 /**
- * Converts a static character array to an uint8_t data source
+ * Converts a static character array to an uint8_t data source which can be
+ * freed
  */
-#define SOURCE(source, content) \
-	uint8_t* source = new uint8_t[strlen(content)]; \
-	{ \
-	  const char* content_string = content; \
-		memcpy(source, content_string, strlen(content) + 1); \
-	}
+#define SOURCE(source, content)								\
+	uint8_t* source = (uint8_t*)calloc(strlen(content) + 1, sizeof(uint8_t));	\
+	memcpy(source, (content), strlen(content) + 1);					\
+
 
 /**
  * Tries to parse a simple document containing only one tag
@@ -185,11 +185,11 @@ static void test_xml_parse_document_2() {
 	  (uint8_t *)"Is", 0));
 	assert_that(!strcmp((const char*)name_is, "Is"),
 	  "Name of Parent/This/Is must be `Is'");
-	delete[] name_is;
+	free(name_is);
 	uint8_t* content_a = xml_easy_content(test_a);
 	assert_that(!strcmp((const char*)content_a, "Content A"),
 	  "Content of Parent/This/Is/A/Test must be `Content A'");
-	delete[] content_a;
+	free(content_a);
 	xml_document_free(document, true);
 }
 
