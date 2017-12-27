@@ -31,6 +31,9 @@ ADD_LIBRARY(xml STATIC
 
 # Build unit cases
 INCLUDE_DIRECTORIES(${SOURCE_DIRECTORY})
+IF (APPLE)
+    INCLUDE_DIRECTORIES("/usr/include/malloc/")
+ENDIF()
 
 ADD_EXECUTABLE(test-xml-c
 	${TEST_SOURCE_DIRECTORY}/test-xml-c
