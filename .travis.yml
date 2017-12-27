@@ -9,5 +9,6 @@ script:
   - mkdir build && cd build
   - cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=gcc -DXML_PARSER_VERBOSE=On ..
   - make
-after_script: ../run-tests.sh
+after_script:
+  - make test
 

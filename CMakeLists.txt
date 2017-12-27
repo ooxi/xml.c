@@ -1,55 +1,51 @@
 # Project setup
-PROJECT(xml)
-SET(VERSION_MAJOR "0")
-SET(VERSION_MINOR "1")
-SET(VERSION_PATCH "4")
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6.0 FATAL_ERROR) 
+project(xml C CXX)
+set(VERSION_MAJOR "0")
+set(VERSION_MINOR "2")
+set(VERSION_PATCH "0")
+cmake_minimum_required(VERSION 3.1.0 FATAL_ERROR) 
+
+
+# Define main library target
+add_library(xml STATIC "")
 
 
 # Compiler setup
-SET(CMAKE_C_FLAGS_DEBUG "-g -DDEBUG")
-SET(CMAKE_C_FLAGS_RELEASE "-O2")
+target_compile_options(
+	xml
+	PRIVATE
+		-std=c11
+)
+
 
 # Options
-OPTION(XML_PARSER_VERBOSE "Enable to be told everything the xml parser does" OFF)
+option(XML_PARSER_VERBOSE "Enable to be told everything the xml parser does" OFF)
 
-IF(XML_PARSER_VERBOSE)
-	ADD_DEFINITIONS(-DXML_PARSER_VERBOSE)
-ENDIF(XML_PARSER_VERBOSE)
+if(XML_PARSER_VERBOSE)
+	target_compile_definitions(
+		xml
+		PRIVATE
+			XML_PARSER_VERBOSE
+	)
+endif(XML_PARSER_VERBOSE)
 
 
 # Sources
-SET(SOURCE_DIRECTORY src)
-SET(TEST_SOURCE_DIRECTORY test)
+target_sources(
+	xml
+	PRIVATE
+		"${CMAKE_CURRENT_LIST_DIR}/src/xml.c"
+)
 
 
-# Build library
-ADD_LIBRARY(xml STATIC
-	${SOURCE_DIRECTORY}/xml.c
+target_include_directories(
+	xml
+	PUBLIC
+		"${CMAKE_CURRENT_LIST_DIR}/src/"
 )
 
 
 # Build unit cases
-INCLUDE_DIRECTORIES(${SOURCE_DIRECTORY})
-
-ADD_EXECUTABLE(test-xml-c
-	${TEST_SOURCE_DIRECTORY}/test-xml-c
-)
-TARGET_LINK_LIBRARIES(test-xml-c xml)
-
-ADD_EXECUTABLE(test-xml-cpp
-  ${TEST_SOURCE_DIRECTORY}/test-xml-cpp
-)
-TARGET_LINK_LIBRARIES(test-xml-cpp xml)
-
-FILE(	COPY ${TEST_SOURCE_DIRECTORY}/test.xml
-	DESTINATION ${PROJECT_BINARY_DIR}
-)
-
-
-# Building example
-ADD_EXECUTABLE(example
-	${TEST_SOURCE_DIRECTORY}/example
-)
-TARGET_LINK_LIBRARIES(example xml)
+enable_testing()
+add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/test")
 

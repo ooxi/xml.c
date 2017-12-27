@@ -20,6 +20,10 @@
  *
  *  3. This notice may not be removed or altered from any source distribution.
  */
+#ifdef XML_PARSER_VERBOSE
+#include <alloca.h>
+#endif
+
 #include <ctype.h>
 #include <malloc.h>
 #include <stdarg.h>

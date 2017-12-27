@@ -20,6 +20,7 @@
  *
  *  3. This notice may not be removed or altered from any source distribution.
  */
+#include <alloca.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
