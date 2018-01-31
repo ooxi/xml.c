@@ -124,7 +124,7 @@ static size_t get_zero_terminated_array_elements(struct xml_node** nodes) {
  *
  * @warning No UTF conversions will be attempted
  *
- * @return true gdw. a == b
+ * @return true iff a == b
  */
 static _Bool xml_string_equals(struct xml_string* a, struct xml_string* b) {
 
