@@ -96,3 +96,29 @@ add_test(
 	COMMAND valgrind --tool=memcheck --leak-check=full --track-origins=yes -v "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-test-cpp"
 )
 
+
+
+# Test huitre39
+add_executable(
+	"${PROJECT_NAME}-test-huitre39"
+	"${CMAKE_CURRENT_LIST_DIR}/test-huitre39.c"
+)
+
+target_compile_options(
+	"${PROJECT_NAME}-test-huitre39"
+	PRIVATE
+		-std=c11
+)
+
+target_link_libraries(
+	"${PROJECT_NAME}-test-huitre39"
+	PRIVATE
+		xml
+)
+
+
+add_test(
+	NAME "${PROJECT_NAME}-test-huitre39"
+	COMMAND "${PROJECT_NAME}-test-huitre39"
+)
+
