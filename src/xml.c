@@ -833,6 +833,7 @@ struct xml_node* xml_easy_child(struct xml_node* node, uint8_t const* child_name
 				/* Two children with the same name
 				 */
 				} else {
+					va_end(arguments);
 					return 0;
 				}
 			}
@@ -841,6 +842,7 @@ struct xml_node* xml_easy_child(struct xml_node* node, uint8_t const* child_name
 		/* No child with that name found
 		 */
 		if (!next) {
+			va_end(arguments);
 			return 0;
 		}
 		current = next;		
