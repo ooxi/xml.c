@@ -914,3 +914,18 @@ void xml_string_copy(struct xml_string* string, uint8_t* buffer, size_t length) 
 	memcpy(buffer, string->buffer, length);
 }
 
+int xml_content_is_subtree(struct xml_node *node) {
+	struct xml_string *content = xml_node_content(node);
+
+	// no content.. tree/subtree
+	if (!content) {
+		return 1;
+	}
+
+	if (content->length == 0) {
+		return 1;
+	}
+
+	return 0;
+}
+
