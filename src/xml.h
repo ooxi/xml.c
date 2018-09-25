@@ -165,6 +165,13 @@ size_t xml_string_length(struct xml_string* string);
  */
 void xml_string_copy(struct xml_string* string, uint8_t* buffer, size_t length);
 
+/**
+ * Validate if the content is a subtree or a value
+ *
+ * @warning node is not checked for null
+ */
+int xml_content_is_subtree(struct xml_node *node);
+
 #ifdef __cplusplus
 }
 #endif
