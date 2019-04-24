@@ -40,6 +40,7 @@ extern "C" {
  */
 struct xml_document;
 struct xml_node;
+struct xml_attribute;
 
 /**
  * Internal character sequence representation
@@ -122,6 +123,27 @@ size_t xml_node_children(struct xml_node* node);
  * @return The n-th child or 0 if out of range
  */
 struct xml_node* xml_node_child(struct xml_node* node, size_t child);
+
+
+
+/**
+ * @return Number of attribute nodes
+ */
+size_t xml_node_attributes(struct xml_node* node);
+
+
+
+/**
+ * @return the n-th attribute name or 0 if out of range
+ */
+struct xml_string* xml_node_attribute_name(struct xml_node* node, size_t attribute);
+
+
+
+/**
+ * @return the n-th attribute content or 0 if out of range
+ */
+struct xml_string* xml_node_attribute_content(struct xml_node* node, size_t attribute);
 
 
 
