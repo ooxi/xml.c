@@ -410,7 +410,7 @@ static void xml_skip_whitespace(struct xml_parser* parser) {
  * Finds and creates all attributes on the given node.
  */
 static struct xml_attribute** xml_find_attributes(struct xml_string* tag_open) {
-	xml_parser_info(parser, "find_attributes");
+	xml_parser_info(NULL, "find_attributes");
 	char* tmp;
 	char* rest = NULL;
 	char* token;
