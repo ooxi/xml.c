@@ -28,8 +28,12 @@ add_test(
 
 
 
-# Test case
+# Test cases
 FILE(	COPY "${CMAKE_CURRENT_LIST_DIR}/test.xml"
+	DESTINATION "${CMAKE_CURRENT_BINARY_DIR}"
+)
+
+FILE(	COPY "${CMAKE_CURRENT_LIST_DIR}/test-attributes.xml"
 	DESTINATION "${CMAKE_CURRENT_BINARY_DIR}"
 )
 

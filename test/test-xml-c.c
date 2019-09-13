@@ -217,6 +217,37 @@ static void test_xml_parse_document_3() {
 
 
 
+/**
+ * Test parsing of attributes
+ *
+ * @author Isty001
+ * @see https://github.com/Isty001/
+ */
+static void test_xml_parse_attributes() {
+	#define FILE_NAME "test-attributes.xml"
+	FILE* handle = fopen(FILE_NAME, "rb");
+	assert_that(handle, "Cannot open " FILE_NAME);
+
+	struct xml_document* document = xml_open_document(handle);
+	assert_that(document, "Cannot parse " FILE_NAME);
+
+	struct xml_node* element = xml_easy_child(
+		xml_document_root(document), 0
+	);
+
+	assert_that(element, "Cannot find Document/Element/With");
+	assert_that(2 == xml_node_attributes(element), "Should have 2 attributes");
+
+	assert_that(string_equals(xml_node_attribute_name(element, 0), "value"), "Content of Document/Element/With must be `Child'");
+	assert_that(string_equals(xml_node_attribute_content(element, 0), "2"), "First attribute's content should be \"2\"");
+
+	assert_that(string_equals(xml_node_attribute_name(element, 1), "value_2"), "Content of Document/Element/With must be `Child'");
+	assert_that(string_equals(xml_node_attribute_content(element, 1), "Hello"), "Second attribute's content should be Hello");
+
+	xml_document_free(document, true);
+	#undef FILE_NAME
+}
+
 
 
 /**
@@ -227,8 +258,8 @@ int main(int argc, char** argv) {
 	test_xml_parse_document_1();
 	test_xml_parse_document_2();
 	test_xml_parse_document_3();
+	test_xml_parse_attributes();
 
 	fprintf(stdout, "All tests passed :-)\n");
 	exit(EXIT_SUCCESS);
 }
-

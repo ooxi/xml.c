@@ -36,6 +36,47 @@
 
 
 
+/* 
+ * public domain strtok_r() by Charlie Gordon
+ *
+ *   from comp.lang.c  9/14/2007
+ *
+ *      http://groups.google.com/group/comp.lang.c/msg/2ab1ecbb86646684
+ *
+ *     (Declaration that it's public domain):
+ *      http://groups.google.com/group/comp.lang.c/msg/7c7b39328fefab9c
+ */
+static char* xml_strtok_r(char *str, const char *delim, char **nextp) {
+	char *ret;
+
+	if (str == NULL) {
+		str = *nextp;
+	}
+
+	str += strspn(str, delim);
+
+	if (*str == '\0') {
+		return NULL;
+	}
+
+	ret = str;
+
+	str += strcspn(str, delim);
+
+	if (*str) {
+		*str++ = '\0';
+	}
+
+	*nextp = str;
+
+	return ret;
+}
+
+
+
+
+
+
 /**
  * [OPAQUE API]
  *
@@ -116,9 +157,26 @@ enum xml_parser_offset {
 /**
  * [PRIVATE]
  *
- * @return Number of elements in 0-terminated array
+ * @return Number of attributes in 0-terminated array
  */
-static size_t get_zero_terminated_array_elements(struct xml_node** nodes) {
+static size_t get_zero_terminated_array_attributes(struct xml_attribute** attributes) {
+	size_t elements = 0;
+
+	while (attributes[elements]) {
+		++elements;
+	}
+
+	return elements;
+}
+
+
+
+/**
+ * [PRIVATE]
+ *
+ * @return Number of nodes in 0-terminated array
+ */
+static size_t get_zero_terminated_array_nodes(struct xml_node** nodes) {
 	size_t elements = 0;
 
 	while (nodes[elements]) {
@@ -398,13 +456,13 @@ static struct xml_attribute** xml_find_attributes(struct xml_parser* parser, str
 
 	tmp = (char*) xml_string_clone(tag_open);
 
-	token = strtok_r(tmp, " ", &rest); // skip the first value
+	token = xml_strtok_r(tmp, " ", &rest); // skip the first value
 	if(token == NULL) {
 		goto cleanup;
 	}
 	tag_open->length = strlen(token);
 
-	for(token=strtok_r(NULL," ", &rest); token!=NULL; token=strtok_r(NULL," ", &rest)) {
+	for(token=xml_strtok_r(NULL," ", &rest); token!=NULL; token=xml_strtok_r(NULL," ", &rest)) {
 		str_name = malloc(strlen(token)+1);
 		str_content = malloc(strlen(token)+1);
 		// %s=\"%s\" wasn't working for some reason, ugly hack to make it work
@@ -427,7 +485,7 @@ static struct xml_attribute** xml_find_attributes(struct xml_parser* parser, str
 		new_attribute->content->buffer = (unsigned char*)start_content;
 		new_attribute->content->length = strlen(str_content);
 
-		old_elements = get_zero_terminated_array_elements(attributes);
+		old_elements = get_zero_terminated_array_attributes(attributes);
 		new_elements = old_elements + 1;
 		attributes = realloc(attributes, (new_elements+1)*sizeof(struct xml_attributes*));
 
@@ -690,7 +748,7 @@ static struct xml_node* xml_parse_node(struct xml_parser* parser) {
 
 		/* Grow child array :)
 		 */
-		size_t old_elements = get_zero_terminated_array_elements(children);
+		size_t old_elements = get_zero_terminated_array_nodes(children);
 		size_t new_elements = old_elements + 1;
 		children = realloc(children, (new_elements + 1) * sizeof(struct xml_node*));
 
@@ -892,7 +950,7 @@ struct xml_string* xml_node_content(struct xml_node* node) {
  * @warning O(n)
  */
 size_t xml_node_children(struct xml_node* node) {
-	return get_zero_terminated_array_elements(node->children);
+	return get_zero_terminated_array_nodes(node->children);
 }
 
 
@@ -914,7 +972,7 @@ struct xml_node* xml_node_child(struct xml_node* node, size_t child) {
  * [PUBLIC API]
  */
 size_t xml_node_attributes(struct xml_node* node) {
-	return get_zero_terminated_array_elements(node->attributes);
+	return get_zero_terminated_array_attributes(node->attributes);
 }
 
 
