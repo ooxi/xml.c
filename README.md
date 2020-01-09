@@ -76,7 +76,7 @@ int main(int argc, char** argv) {
 
 	/* You _have_ to check the result of `xml_parse_document', if it's 0
 	 * then the source could not be parsed. If you think this is a bug in
-	 * xml.c, than use a debug build (cmake -DCMAKE_BUILD_TYPE=Debug) which
+	 * xml.c, then use a debug build (cmake -DCMAKE_BUILD_TYPE=Debug) which
 	 * will verbosely tell you about the parsing process
 	 */
 	if (!document) {
