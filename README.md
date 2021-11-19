@@ -28,7 +28,7 @@ easy
     $ git clone https://github.com/ooxi/xml.c.git xml.c
     $ mkdir xml.c/build; cd xml.c/build
     $ cmake -DCMAKE_BUILD_TYPE=Release ..
-    $ make && ../run-tests.sh
+    $ make && make test
 
 If you need a debug build, specify `CMAKE_BUILD_TYPE` as `Debug` and rebuild.
 
