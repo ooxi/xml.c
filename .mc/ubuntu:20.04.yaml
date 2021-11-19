@@ -1,5 +1,5 @@
 ---
-base: ubuntu:16.04
+base: ubuntu:20.04
 install:
  - cmake
  - g++
