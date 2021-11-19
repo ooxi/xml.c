@@ -19,6 +19,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Build and TesT
+    - name: Build and Test
       run: npx --package mini-cross@0.15.2 mc --no-tty ubuntu:20.04 .mc/rebuild.sh
 
