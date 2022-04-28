@@ -25,7 +25,11 @@
 #endif
 
 #include <ctype.h>
+
+#ifndef __MACH__
 #include <malloc.h>
+#endif
+
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stdio.h>
