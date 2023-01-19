@@ -20,6 +20,8 @@
  *
  *  3. This notice may not be removed or altered from any source distribution.
  */
+#include "xml.h"
+
 #ifdef XML_PARSER_VERBOSE
 #include <alloca.h>
 #endif
@@ -34,7 +36,6 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "xml.h"
 
 
 
