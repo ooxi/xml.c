@@ -126,3 +126,29 @@ add_test(
 	COMMAND "${PROJECT_NAME}-test-huitre39"
 )
 
+
+
+# Test space in attribute value (issue #33)
+add_executable(
+	"${PROJECT_NAME}-test-issue-33"
+	"${CMAKE_CURRENT_LIST_DIR}/test-issue-33.c"
+)
+
+target_compile_options(
+	"${PROJECT_NAME}-test-issue-33"
+	PRIVATE
+		-std=c11
+)
+
+target_link_libraries(
+	"${PROJECT_NAME}-test-issue-33"
+	PRIVATE
+		xml
+)
+
+
+add_test(
+	NAME "${PROJECT_NAME}-test-issue-33"
+	COMMAND "${PROJECT_NAME}-test-issue-33"
+)
+
