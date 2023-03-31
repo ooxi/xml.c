@@ -492,7 +492,7 @@ static struct xml_attribute** xml_find_attributes(struct xml_parser* parser, str
 
 		old_elements = get_zero_terminated_array_attributes(attributes);
 		new_elements = old_elements + 1;
-		attributes = realloc(attributes, (new_elements+1)*sizeof(struct xml_attributes*));
+		attributes = realloc(attributes, (new_elements+1)*sizeof(struct xml_attribute*));
 
 		attributes[new_elements-1] = new_attribute;
 		attributes[new_elements] = 0;
