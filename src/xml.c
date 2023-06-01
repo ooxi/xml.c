@@ -535,6 +535,7 @@ static struct xml_string* xml_parse_tag_end(struct xml_parser* parser) {
 			length++;
 		}
 	}
+	xml_skip_whitespace(parser);
 
 	/* Consume `>'
 	 */
